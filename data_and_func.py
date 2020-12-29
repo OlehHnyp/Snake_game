@@ -66,13 +66,14 @@ class Blocks:
     def __eq__(self, other):
         return self.c==other.c and self.r==other.r
 
-class AnswerBlocks(Blocks):
+class AnswerBlocks:
 
     color = VIOLET
-    def __init__(self, answer, column=r_column, row=r_row):
+    def __init__(self, answer, point=0, column=r_column, row=r_row):
         self.c = column
         self.r = row
         self.answer = answer
+        self.point = point
 
 
     def snake_head_in_answer(self, snake):
@@ -113,10 +114,9 @@ class AnswerBlocks(Blocks):
 
 class Questions:
     
-    def __init__(self, point, question, answers=None):
+    def __init__(self, point, question):
         self.point = point
         self.question = question
-        self.answers = answers
 
     def add_question(self):
         interval1 = 25
@@ -138,8 +138,8 @@ move_y = reserve_move_y = 0
 
 
 
-answers1 = [AnswerBlocks(['True']),
-            AnswerBlocks(['False']),
+answers1 = [AnswerBlocks(['True'],1),
+            AnswerBlocks(['False'],1),
             AnswerBlocks(['Yes']),
             AnswerBlocks(['Yes']),
             AnswerBlocks(['Yes']),
@@ -156,11 +156,11 @@ answers1 = [AnswerBlocks(['True']),
             AnswerBlocks(['Lie'])
             ]
 
-question1 = Questions(1,["Eat all boolean values", "lkasjfklsjgl"])
+question1 = Questions(2,["Eat all boolean values", "lkasjfklsjgl"])
 
 
 
-answers2 = [AnswerBlocks(['list']),
+answers2 = [AnswerBlocks(['list'],1),
             AnswerBlocks(['float']),
             AnswerBlocks(['int']),
             AnswerBlocks(['str']),
