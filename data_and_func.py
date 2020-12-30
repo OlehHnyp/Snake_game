@@ -1,6 +1,7 @@
 import pygame
 import random
 import pprint
+import copy
 
 
 WHITE = (255, 255, 255)
@@ -30,11 +31,11 @@ block_columns = screen_width // (BLOCK_SIZE+INTERVAL)
 block_rows = (screen_height-header_margin) // (BLOCK_SIZE+INTERVAL)
 answer_courier =  pygame.font.SysFont('courier', 20)
 r_column = random.randint(0, block_columns-2)
-r_row = random.randint(0, block_rows-2)
+r_row = random.randint(0, block_rows-3)
 question_courier = pygame.font.SysFont('courier', 45, bold=True)
 
 
-print(print(block_rows))
+
 
 
                              
@@ -54,6 +55,12 @@ def draw_margins(color):
     pygame.draw.rect(screen, color, (0, question_margin, free_x/2, screen_height-question_margin))
     pygame.draw.rect(screen, color, (screen_width - free_x/2, question_margin, free_x/2, screen_height-question_margin))
 
+def set_default_snake():
+    snake = [Blocks(0, block_rows-1), Blocks(0, block_rows-1), Blocks(0, block_rows-1), Blocks(0, block_rows-1), Blocks(0, block_rows-1)]
+    return snake
+
+
+
 class Blocks:
 
     def __init__(self, column, row):
@@ -69,21 +76,23 @@ class Blocks:
 class AnswerBlocks:
 
     color = VIOLET
-    def __init__(self, answer, point=0, column=r_column, row=r_row):
+    def __init__(self, answer, point, score, life=0, column=r_column, row=r_row):
         self.c = column
         self.r = row
         self.answer = answer
         self.point = point
+        self.score = score
+        self.life = life
 
 
     def snake_head_in_answer(self, snake):
         return -1<(snake.c-self.c)<2 and -1<(snake.r-self.r)<2
 
-    def snake_in_answer(self, snake):
-        for el in snake:
-            if self.snake_head_in_answer(el):
-                return True
-        return False
+    # def snake_in_answer(self, snake):
+    #     for el in snake:
+    #         if self.snake_head_in_answer(el):
+    #             return True
+    #     return False
 
     
     
@@ -132,39 +141,28 @@ class Questions:
 
 
 
-snake = [Blocks(0, 9), Blocks(0, 8), Blocks(0, 7), Blocks(0, 6), Blocks(0, 5)]
+snake = [Blocks(0, block_rows-1), Blocks(0, block_rows-1), Blocks(0, block_rows-1), Blocks(0, block_rows-1), Blocks(1, block_rows-1)]
+default_snake = copy.deepcopy(snake)
 move_x = reserve_move_x = 1
 move_y = reserve_move_y = 0
 
 
 
-answers1 = [AnswerBlocks(['True'],1),
-            AnswerBlocks(['False'],1),
-            AnswerBlocks(['Yes']),
-            AnswerBlocks(['Yes']),
-            AnswerBlocks(['Yes']),
-            AnswerBlocks(['Yes']),
-            AnswerBlocks(['Yes']),
-            AnswerBlocks(['Yes']),
-            AnswerBlocks(['Yes']),
-            AnswerBlocks(['Yes']),
-            AnswerBlocks(['Yes']),
-            AnswerBlocks(['Yes']),
-            AnswerBlocks(['Yes']),
-            AnswerBlocks(['Yes']),
-            AnswerBlocks(['Yes']),
-            AnswerBlocks(['Lie'])
+answers1 = [AnswerBlocks(['True'], 1, 1),
+            AnswerBlocks(['False'], 1, 1),
+            AnswerBlocks(['Yes'], 0, -1, -1),
+            AnswerBlocks(['Lie'], 0, -1, -1)
             ]
 
 question1 = Questions(2,["Eat all boolean values", "lkasjfklsjgl"])
 
 
 
-answers2 = [AnswerBlocks(['list'],1),
-            AnswerBlocks(['float']),
-            AnswerBlocks(['int']),
-            AnswerBlocks(['str']),
-            AnswerBlocks(['set']),
+answers2 = [AnswerBlocks(['list'], 1, 1),
+            AnswerBlocks(['float'], 0, -1),
+            AnswerBlocks(['int'], 0, -1, -1),
+            AnswerBlocks(['str'], 0, -1, -1),
+            AnswerBlocks(['set'], 0, -1, -1),
             ]
 
 question2 = Questions(1,["Eat all mutable types"])
@@ -173,3 +171,4 @@ question2 = Questions(1,["Eat all mutable types"])
 questions = [question1, question2]
 answers = [answers1, answers2]
 q_a_list_zip = list(zip(questions, answers))
+
