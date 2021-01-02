@@ -5,12 +5,12 @@ import copy
 
 
 WHITE = (255, 255, 255)
-VIOLET = (138,43,226)
-YELLOW = (255, 255, 102)
-BLUE = (102, 178, 255)
+VIOLET = (204,0,204)
+YELLOW = (255, 255, 153)
+BLUE = (204, 255, 229)
 SUPER_BLUE = (0, 0, 255)
 RED = (255, 0, 0)
-GREEN = (0, 255, 0)
+GREEN = (0, 200, 0)
 BLOCK_SIZE = 35
 INTERVAL = 2
 
@@ -29,10 +29,20 @@ header_margin = 3*(BLOCK_SIZE+INTERVAL)
 question_margin = header_margin + free_y
 block_columns = screen_width // (BLOCK_SIZE+INTERVAL)
 block_rows = (screen_height-header_margin) // (BLOCK_SIZE+INTERVAL)
+background_block_columns = screen_width // (BLOCK_SIZE+INTERVAL)
+background_block_rows = (screen_height) // (BLOCK_SIZE+INTERVAL)
 answer_courier =  pygame.font.SysFont('courier', 20)
 r_column = random.randint(0, block_columns-2)
 r_row = random.randint(0, block_rows-3)
 question_courier = pygame.font.SysFont('courier', 45, bold=True)
+final_score_courier = pygame.font.SysFont('courier', 45, bold=True)
+move_sound = pygame.mixer.Sound(r'C:\Users\User\Downloads\503340__tahutoa__clicky-accept-menu-sound.wav')
+right_sound = pygame.mixer.Sound(r'C:\Users\User\Downloads\right.wav')
+wrong_sound = pygame.mixer.Sound(r'C:\Users\User\Downloads\wrong.wav')
+next_level_sound = pygame.mixer.Sound(r'C:\Users\User\Downloads\next_level2.wav')
+crash_sound = pygame.mixer.Sound(r'C:\Users\User\Downloads\crash.wav')
+selfcrash_sound = pygame.mixer.Sound(r'C:\Users\User\Downloads\selfcrash.wav')
+game_over_sound = pygame.mixer.Sound(r'C:\Users\User\Downloads\game_over.wav')
 
 
 
@@ -49,14 +59,24 @@ def add_block(color, column, row):
                       BLOCK_SIZE]
                       )
 
+def draw_background(color, column, row):
+    pygame.draw.rect(screen, color,
+                     [(BLOCK_SIZE+INTERVAL) * column,
+                      (BLOCK_SIZE+INTERVAL) * row,
+                      BLOCK_SIZE,
+                      BLOCK_SIZE]
+                      )    
+
 
 def draw_margins(color):
     pygame.draw.rect(screen, color, (0, 0, screen_width, question_margin))
     pygame.draw.rect(screen, color, (0, question_margin, free_x/2, screen_height-question_margin))
     pygame.draw.rect(screen, color, (screen_width - free_x/2, question_margin, free_x/2, screen_height-question_margin))
 
-def set_default_snake():
-    snake = [Blocks(0, block_rows-1), Blocks(0, block_rows-1), Blocks(0, block_rows-1), Blocks(0, block_rows-1), Blocks(0, block_rows-1)]
+def set_default_snake(x, n=0):
+    snake = []
+    for i in range(len(x)+n):
+        snake.append(Blocks(0, block_rows-1))
     return snake
 
 
@@ -83,6 +103,7 @@ class AnswerBlocks:
         self.point = point
         self.score = score
         self.life = life
+        self.len = len
 
 
     def snake_head_in_answer(self, snake):
@@ -118,7 +139,7 @@ class AnswerBlocks:
         screen.blit(text,(x, y + interval1))
                     
     def __eq__(self, other):
-        return abs(self.c- other.c)<2 and abs(self.r- other.r)<2
+        return abs(self.c- other.c)<3 and abs(self.r- other.r)<3
 
 
 class Questions:
@@ -141,28 +162,33 @@ class Questions:
 
 
 
-snake = [Blocks(0, block_rows-1), Blocks(0, block_rows-1), Blocks(0, block_rows-1), Blocks(0, block_rows-1), Blocks(1, block_rows-1)]
+snake = [Blocks(0, block_rows-1),
+         Blocks(0, block_rows-1), 
+         Blocks(0, block_rows-1), 
+         (0, block_rows-1), 
+         Blocks(1, block_rows-1)]
 default_snake = copy.deepcopy(snake)
 move_x = reserve_move_x = 1
 move_y = reserve_move_y = 0
+food = Blocks(r_column, r_row)
 
 
 
-answers1 = [AnswerBlocks(['True'], 1, 1),
-            AnswerBlocks(['False'], 1, 1),
-            AnswerBlocks(['Yes'], 0, -1, -1),
-            AnswerBlocks(['Lie'], 0, -1, -1)
+answers1 = [AnswerBlocks(['True'], point=1, score=1,),
+            AnswerBlocks(['False'], point=1, score=1,),
+            AnswerBlocks(['Yes'], point=0, score=-1, life=-1),
+            AnswerBlocks(['Lie'], point=0, score=-1, life=-1)
             ]
 
 question1 = Questions(2,["Eat all boolean values", "lkasjfklsjgl"])
 
 
 
-answers2 = [AnswerBlocks(['list'], 1, 1),
-            AnswerBlocks(['float'], 0, -1),
-            AnswerBlocks(['int'], 0, -1, -1),
-            AnswerBlocks(['str'], 0, -1, -1),
-            AnswerBlocks(['set'], 0, -1, -1),
+answers2 = [AnswerBlocks(['list'], point=1, score=1,),
+            AnswerBlocks(['float'], point=0, score=-1, life=-1),
+            AnswerBlocks(['int'], point=0, score=-1, life=-1),
+            AnswerBlocks(['str'], point=0, score=-1, life=-1),
+            AnswerBlocks(['set'], point=0, score=-1, life=-1),
             ]
 
 question2 = Questions(1,["Eat all mutable types"])
