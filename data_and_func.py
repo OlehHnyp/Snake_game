@@ -64,6 +64,7 @@ def add_block(color, column, row):
                       BLOCK_SIZE]
                       )
 
+
 def draw_background(color, column, row):
     pygame.draw.rect(screen, color,
                      [(BLOCK_SIZE+INTERVAL) * column,
@@ -78,11 +79,13 @@ def draw_margins(color):
     pygame.draw.rect(screen, color, (0, question_margin, free_x/2, screen_height-question_margin))
     pygame.draw.rect(screen, color, (screen_width - free_x/2+1, question_margin, free_x/2, screen_height-question_margin))
 
+
 def set_default_snake(x, n=0):
     snake = []
     for i in range(len(x)+n):
         snake.append(Blocks(0, block_rows-1))
     return snake
+
 
 def set_no_borders(new_head):
     if new_head.r == block_rows or new_head.r < 0:
@@ -91,20 +94,16 @@ def set_no_borders(new_head):
         new_head.c = abs(block_columns - abs(new_head.c))
     return new_head
 
+
 def set_borders(value, mode):
     global borders
     borders = mode
+
 
 def set_speed(value, mode):
     global speed
     speed = mode
 
-
-# def sound_control(value, mode):
-#     if mode == 1:
-#         pygame.mixer.unpause()
-#     elif mode == 0:
-#         pygame.mixer.pause()
 
 class Sound:
 
@@ -126,7 +125,6 @@ class LoopControl:
         self.is_loop = False
 
 
-
 class Blocks:
 
     def __init__(self, column, row):
@@ -138,6 +136,7 @@ class Blocks:
     
     def __eq__(self, other):
         return self.c==other.c and self.r==other.r
+
 
 class AnswerBlocks:
 
@@ -205,7 +204,7 @@ class Questions:
         text = question_courier.render(self.question[0], 0, WHITE)
         screen.blit(text,(20, 0 + interval1))
 
-
+menu = LoopControl()
 set_menu = LoopControl()
 sound = Sound()
 snake = [Blocks(0, block_rows-1),

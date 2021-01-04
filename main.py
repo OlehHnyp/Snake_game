@@ -93,9 +93,11 @@ def snake():
 
         if not new_head.isinside():
             if d.borders == 1:
-                done = True  
+                done = True
+
                 if d.sound.volume:          
                     d.crash_sound.play()
+
                 time.sleep(1)
             elif d.borders == 0:
                 new_head = d.set_no_borders(new_head)
@@ -157,6 +159,7 @@ def snake():
 
 
 def start_the_game():
+    d.menu.set_loop_false()
     d.menu_music.stop()
     score = 0
     life = 0.666
@@ -288,12 +291,15 @@ def start_the_game():
                             d.next_level_sound.play()
 
                         time.sleep(1)
-                        # return score
+                        return None
+
                     life += el.life
                     if life < 0:
                         done = True
+
                     if d.sound.volume:
                         d.right_sound.play() if el.score>0 else d.wrong_sound.play()
+
                     answers.pop(i)
 
             d.snake.append(new_head)
@@ -334,7 +340,9 @@ def start_the_game():
     pygame.display.flip()
 
     time.sleep(3)
-    d.menu_music.play(-1)
+    if d.sound.volume:
+        d.menu_music.play(-1)
+    menu_loop()
 
 
 menu_theme = pygame_menu.themes.THEME_BLUE.copy()
@@ -351,7 +359,14 @@ menu = pygame_menu.Menu(300,
 
 def menu_loop():
     d.menu_music.play(-1)
-    while True:
+    d.menu.set_loop_true()
+    while d.menu.is_loop:
+
+        if not d.sound.volume:
+            pygame.mixer.pause()
+        elif d.sound.volume:
+            pygame.mixer.unpause()
+
         screen.fill(d.WHITE)
         for row in range(d.background_block_rows+2):
                     for column in range(d.background_block_columns+2):
@@ -360,10 +375,7 @@ def menu_loop():
                             color = d.YELLOW
                         d.draw_background(color, column, row)
 
-        if not d.sound.volume:
-            pygame.mixer.pause()
-        elif d.sound.volume:
-            pygame.mixer.unpause()                
+                        
         
 
         events = pygame.event.get()
@@ -419,7 +431,7 @@ menu.add_button('Quit', pygame_menu.events.EXIT)
 
 
 
-set_menu.add_selector('Borders:', [('On', 1), ('Off', 0)], onchange=d.set_borders)
+set_menu.add_selector('Borders:', [('Off', 0), ('On', 1)], onchange=d.set_borders)
 set_menu.add_selector('Speed:',
                       [('Low', 3), ('Medium', 7), ('High', 10),('Extreme', 15), ('Increasing', None)], onchange=d.set_speed)
 set_menu.add_button('Play', snake)
