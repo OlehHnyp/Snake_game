@@ -3,6 +3,7 @@ import random
 import sys
 import time
 import pygame_menu
+import copy
 from pygame_menu import sound
 
 import data_and_func as d
@@ -309,8 +310,8 @@ def start_the_game():
             d.snake.pop(0)
             
             d.clock.tick(2+speed)
-        
-    for el in aq.q_a_list_zip:
+    q_a_list_zip = copy.deepcopy(aq.q_a_list_zip)
+    for el in q_a_list_zip:
         test(el[0], el[1])
 
     if d.sound.volume:
@@ -346,6 +347,7 @@ def start_the_game():
     if d.sound.volume:
         d.menu_music.play(-1)
     menu_loop()
+
 
 
 menu_theme = pygame_menu.themes.THEME_BLUE.copy()
