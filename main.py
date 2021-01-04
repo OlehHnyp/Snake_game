@@ -31,7 +31,9 @@ def snake():
 
     while not done:
         snake_image = pygame.image.load(r"C:\Users\User\Downloads\—Pngtree—green snake clipart hand drawn_5534508 (converted).png")
-        speed = len(d.snake)//4
+        speed = d.speed
+        if d.speed == None:
+            speed = len(d.snake)//4
         score_text = d.question_courier.render(f"Score: {score}", 0, d.WHITE)
         speed_text = d.question_courier.render(f"Speed: {speed}", 0, d.WHITE)
         snake_head = d.snake[-1]
@@ -86,15 +88,17 @@ def snake():
         new_head = d.Blocks(snake_head.c + d.move_x, snake_head.r + d.move_y)
 
         if not new_head.isinside():
-            d.reserve_move_x = 1
-            d.reserve_move_y = 0
-            done = True            
-            d.crash_sound.play()
-            time.sleep(1)
+            if d.borders == 1:
+                done = True            
+                d.crash_sound.play()
+                time.sleep(1)
+            elif d.borders == 0:
+                new_head = d.set_no_borders(new_head)
+            
+
+            
         
         if new_head in d.snake:
-            d.reserve_move_x = 1
-            d.reserve_move_y = 0
             done = True            
             d.selfcrash_sound.play()
             time.sleep(1)
@@ -138,7 +142,7 @@ def snake():
     pygame.display.flip()
 
     time.sleep(3)
-    return score
+    menu_loop()
 
 
 
@@ -309,18 +313,21 @@ def start_the_game():
 
 
 
+
+
 menu_theme = pygame_menu.themes.THEME_BLUE.copy()
 menu_theme.background_color = (178, 255, 103)
 menu_theme.title_font_color = (0, 0, 0)
 menu_theme.title_background_color = (0, 255, 0)
-menu = pygame_menu.Menu(300, 400, 'Welcome',theme=menu_theme)
-
-# menu.add_text_input('Name :', default='John Doe')
-menu.add_button('Python test snake game', start_the_game)
-menu.add_button('Just a snake game', snake)
-menu.add_button('Quit', pygame_menu.events.EXIT)
+menu = pygame_menu.Menu(300,
+                        400, 
+                        'Welcome',
+                        theme=menu_theme,
+                        onclose=pygame_menu.events.EXIT,
+                        mouse_motion_selection=True)
 
 def menu_loop():
+    d.menu_music.play(-1)
     while True:
         screen.fill(d.WHITE)
 
@@ -338,12 +345,68 @@ def menu_loop():
             if event.type == pygame.QUIT:
                 exit()
 
-        if menu.is_enabled():
-            d.menu_music.play(-1)  
+        if menu.is_enabled():              
             menu.update(events)
             menu.draw(screen)
 
         pygame.display.update()
+
+loop = True
+
+def outloop():
+    global loop
+    loop = False
+
+set_menu = pygame_menu.Menu(300,
+                            400, 
+                            'Select options',
+                            theme=menu_theme,
+                            mouse_motion_selection=True,
+                            onclose=outloop)
+
+
+def set_menu_loop():
+    global loop
+    loop = True
+    while loop:
+        screen.fill(d.WHITE)
+
+
+        for row in range(d.background_block_rows+2):
+                    for column in range(d.background_block_columns+2):
+                        color = d.BLUE
+                        if (row+column)%2 == 0:
+                            color = d.YELLOW
+                        d.draw_background(color, column, row)
+        
+
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    loop = False
+
+        if set_menu.is_enabled():  
+            set_menu.update(events)
+            set_menu.draw(screen)
+
+        pygame.display.update()
+
+# menu.add_text_input('Name :', default='John Doe')
+menu.add_button('Python test snake game', start_the_game)
+menu.add_button('Just a snake game', set_menu_loop)
+menu.add_button('Quit', pygame_menu.events.EXIT)
+
+
+
+set_menu.add_selector('Borders:', [('On', 1), ('Off', 0)], onchange=d.set_borders)
+set_menu.add_selector('Speed:',
+                      [('Low', 3), ('Medium', 7), ('High', 10),('Extreme', 15), ('Increasing', None)], onchange=d.set_speed)
+set_menu.add_button('Play', snake)
+
+
 
 def pause():
     pause = True
@@ -401,6 +464,9 @@ def pause():
     d.clock.tick(10)
 
 
+
+
 menu_loop()
-    
+# while True:
+#     d.menu_music.play()
 

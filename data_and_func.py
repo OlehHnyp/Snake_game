@@ -19,8 +19,8 @@ pygame.init()
 
 clock = pygame.time.Clock()
 caption = "The SNAKE game"
-screen_width = pygame.display.Info().current_w
-screen_height = pygame.display.Info().current_h
+screen_width = pygame.display.Info().current_w 
+screen_height = pygame.display.Info().current_h 
 screen_size = [screen_width, screen_height]
 screen = pygame.display.set_mode(screen_size)
 free_x = screen_width % (BLOCK_SIZE+INTERVAL)
@@ -45,16 +45,16 @@ selfcrash_sound = pygame.mixer.Sound(r'C:\Users\User\Downloads\selfcrash.wav')
 game_over_sound = pygame.mixer.Sound(r'C:\Users\User\Downloads\game_over.wav')
 menu_music = pygame.mixer.Sound(r'C:\Users\User\Downloads\172707__axtoncrolley__nodens-field-song.mp3')
 pause_music = pygame.mixer.Sound(r'C:\Users\User\Downloads\265191__b-lamerichs__short-loops-26-02-2015-3.mp3')
+borders = 1
+speed = None
 
-
-menu_music.set_volume(0.1)
-pause_music.set_volume(0.1)
+menu_music.set_volume(0.3)
+pause_music.set_volume(0.3)
 move_sound.set_volume(0.08)
 next_level_sound.set_volume(0.4)
 right_sound.set_volume(0.4)
 
                              
-
 
 def add_block(color, column, row):
     pygame.draw.rect(screen, color,
@@ -83,6 +83,21 @@ def set_default_snake(x, n=0):
     for i in range(len(x)+n):
         snake.append(Blocks(0, block_rows-1))
     return snake
+
+def set_no_borders(new_head):
+    if new_head.r == block_rows or new_head.r < 0:
+        new_head.r = abs(block_rows - abs(new_head.r))
+    elif new_head.c == block_columns or new_head.c < 0:
+        new_head.c = abs(block_columns - abs(new_head.c))
+    return new_head
+
+def set_borders(value, mode):
+    global borders
+    borders = mode
+
+def set_speed(value, mode):
+    global speed
+    speed = mode
 
 
 
