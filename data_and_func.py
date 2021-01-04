@@ -2,6 +2,7 @@ import pygame
 import random
 import copy
 import sys
+from os import path as p
 
 
 WHITE = (255, 255, 255)
@@ -16,7 +17,7 @@ INTERVAL = 2
 
 pygame.init()
 
-
+dirname = p.dirname(__file__)
 clock = pygame.time.Clock()
 caption = "The SNAKE game"
 screen_width = pygame.display.Info().current_w 
@@ -36,15 +37,15 @@ r_column = random.randint(0, block_columns-2)
 r_row = random.randint(0, block_rows-3)
 question_courier = pygame.font.SysFont('palatinolinotype', 45, bold=True)
 final_score_courier = pygame.font.SysFont('courier', 45, bold=True)
-move_sound = pygame.mixer.Sound(r'C:\Users\User\Downloads\377017__elmasmalo1__notification-pop.wav')
-right_sound = pygame.mixer.Sound(r'C:\Users\User\Downloads\right.wav')
-wrong_sound = pygame.mixer.Sound(r'C:\Users\User\Downloads\wrong.wav')
-next_level_sound = pygame.mixer.Sound(r'C:\Users\User\Downloads\next_level2.wav')
-crash_sound = pygame.mixer.Sound(r'C:\Users\User\Downloads\crash.wav')
-selfcrash_sound = pygame.mixer.Sound(r'C:\Users\User\Downloads\selfcrash.wav')
-game_over_sound = pygame.mixer.Sound(r'C:\Users\User\Downloads\game_over.wav')
-menu_music = pygame.mixer.Sound(r'C:\Users\User\Downloads\172707__axtoncrolley__nodens-field-song.mp3')
-pause_music = pygame.mixer.Sound(r'C:\Users\User\Downloads\265191__b-lamerichs__short-loops-26-02-2015-3.mp3')
+move_sound = pygame.mixer.Sound(p.join(dirname, r'media\move.wav'))
+right_sound = pygame.mixer.Sound(p.join(dirname, r'media\right.wav'))
+wrong_sound = pygame.mixer.Sound(p.join(dirname, r'media\wrong.wav'))
+next_level_sound = pygame.mixer.Sound(p.join(dirname, r'media\nl.wav'))
+crash_sound = pygame.mixer.Sound(p.join(dirname, r'media\crash.wav'))
+selfcrash_sound = pygame.mixer.Sound(p.join(dirname, r'media\scrash.wav'))
+game_over_sound = pygame.mixer.Sound(p.join(dirname, r'media\go.wav'))
+menu_music = pygame.mixer.Sound(p.join(dirname, r'media\menu.mp3'))
+pause_music = pygame.mixer.Sound(p.join(dirname, r'media\pause.mp3'))
 borders = 1
 speed = None
 

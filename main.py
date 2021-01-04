@@ -33,7 +33,7 @@ def snake():
     
 
     while not done:
-        snake_image = pygame.image.load(r"C:\Users\User\Downloads\—Pngtree—green snake clipart hand drawn_5534508 (converted).png")
+        snake_image = pygame.image.load(d.p.join(d.dirname, r"media\snake.png"))
         speed = d.speed
         if d.speed == None:
             speed = len(d.snake)//4
