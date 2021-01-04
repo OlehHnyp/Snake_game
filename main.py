@@ -3,6 +3,7 @@ import random
 import sys
 import time
 import pygame_menu
+from pygame_menu import sound
 
 import data_and_func as d
 import answers_and_questions as aq
@@ -12,6 +13,7 @@ screen = pygame.display.set_mode(d.screen_size)
 
 
 def snake():
+    d.set_menu.set_loop_false()
     d.menu_music.stop()    
     score = 0
     done = False
@@ -83,14 +85,17 @@ def snake():
         d.move_y = d.reserve_move_y
 
         pygame.display.flip()
-        d.move_sound.play()
+        if d.sound.volume:
+            d.move_sound.play()
+    
         
         new_head = d.Blocks(snake_head.c + d.move_x, snake_head.r + d.move_y)
 
         if not new_head.isinside():
             if d.borders == 1:
-                done = True            
-                d.crash_sound.play()
+                done = True  
+                if d.sound.volume:          
+                    d.crash_sound.play()
                 time.sleep(1)
             elif d.borders == 0:
                 new_head = d.set_no_borders(new_head)
@@ -99,21 +104,24 @@ def snake():
             
         
         if new_head in d.snake:
-            done = True            
-            d.selfcrash_sound.play()
+            done = True
+            if d.sound.volume:            
+                d.selfcrash_sound.play()
             time.sleep(1)
 
         if new_head == d.food:
             score += 1
             d.snake.insert(0,d.food)
-            d.right_sound.play()
+            if d.sound.volume:
+                d.right_sound.play()
 
         d.snake.append(new_head)
         d.snake.pop(0)
-        
+ 
         d.clock.tick(2+speed)
 
-    d.game_over_sound.play()
+    if d.sound.volume:
+        d.game_over_sound.play()
     d.screen.fill(d.WHITE)
     for row in range(d.background_block_rows+2):
                 for column in range(d.background_block_columns+2):
@@ -142,7 +150,8 @@ def snake():
     pygame.display.flip()
 
     time.sleep(3)
-    menu_loop()
+    if d.sound.volume:
+        d.menu_music.play(-1)
 
 
 
@@ -181,13 +190,16 @@ def start_the_game():
             screen.blit(life_text, (d.screen_width-270, 45))
             
             for row in range(d.block_rows):
+
                 for column in range(d.block_columns):
                     color = d.BLUE
+
                     if (row+column)%2 == 0:
                         color = d.YELLOW
                     d.add_block(color, column, row)
 
             for el in answers:
+
                 if el not in check_answer: # and not el.snake_in_answer(snake):
                     el.add_answers()
                 else:
@@ -201,10 +213,12 @@ def start_the_game():
                 d.add_block(d.RED, block.c, block.r)
             
             for event in pygame.event.get():
+
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
                 elif event.type == pygame.KEYDOWN:
+
                     if event.key == pygame.K_SPACE:
                         pause()
                     elif event.key == pygame.K_UP and d.move_y != 1:
@@ -224,7 +238,8 @@ def start_the_game():
             d.move_y = d.reserve_move_y
 
             pygame.display.flip()
-            d.move_sound.play()
+            if d.sound.volume:
+                d.move_sound.play()
             
             new_head = d.Blocks(snake_head.c + d.move_x, snake_head.r + d.move_y)
 
@@ -238,7 +253,8 @@ def start_the_game():
                 if life < 0:
                     done = True
                 
-                d.crash_sound.play()
+                if d.sound.volume:
+                    d.crash_sound.play()
                 time.sleep(1)
             
             if new_head in d.snake:
@@ -251,37 +267,45 @@ def start_the_game():
                 if life < 0:
                     done = True
                 
-                d.selfcrash_sound.play()
+                if d.sound.volume:
+                    d.selfcrash_sound.play()
                 time.sleep(1)
 
             for i, el in enumerate(answers):
                 if el.snake_head_in_answer(new_head):                
                     score += el.score
+
                     if score < 0:
                         score = 0
+
                     d.snake.append(new_head)
                     question.point -= el.point
+
                     if question.point<=0:
                         pygame.display.flip()
-                        d.next_level_sound.play()
+
+                        if d.sound.volume:
+                            d.next_level_sound.play()
+
                         time.sleep(1)
-                        return score
+                        # return score
                     life += el.life
                     if life < 0:
                         done = True
-                    d.right_sound.play() if el.score>0 else d.wrong_sound.play()
+                    if d.sound.volume:
+                        d.right_sound.play() if el.score>0 else d.wrong_sound.play()
                     answers.pop(i)
 
             d.snake.append(new_head)
             d.snake.pop(0)
             
             d.clock.tick(2+speed)
-        return score
         
     for el in aq.q_a_list_zip:
         test(el[0], el[1])
 
-    d.game_over_sound.play()
+    if d.sound.volume:
+        d.game_over_sound.play()
     d.screen.fill(d.WHITE)
     for row in range(d.background_block_rows+2):
                 for column in range(d.background_block_columns+2):
@@ -310,9 +334,7 @@ def start_the_game():
     pygame.display.flip()
 
     time.sleep(3)
-
-
-
+    d.menu_music.play(-1)
 
 
 menu_theme = pygame_menu.themes.THEME_BLUE.copy()
@@ -326,18 +348,22 @@ menu = pygame_menu.Menu(300,
                         onclose=pygame_menu.events.EXIT,
                         mouse_motion_selection=True)
 
+
 def menu_loop():
     d.menu_music.play(-1)
     while True:
         screen.fill(d.WHITE)
-
-
         for row in range(d.background_block_rows+2):
                     for column in range(d.background_block_columns+2):
                         color = d.BLUE
                         if (row+column)%2 == 0:
                             color = d.YELLOW
                         d.draw_background(color, column, row)
+
+        if not d.sound.volume:
+            pygame.mixer.pause()
+        elif d.sound.volume:
+            pygame.mixer.unpause()                
         
 
         events = pygame.event.get()
@@ -345,30 +371,25 @@ def menu_loop():
             if event.type == pygame.QUIT:
                 exit()
 
-        if menu.is_enabled():              
+        if menu.is_enabled():           
             menu.update(events)
             menu.draw(screen)
 
         pygame.display.update()
 
-loop = True
 
-def outloop():
-    global loop
-    loop = False
 
 set_menu = pygame_menu.Menu(300,
                             400, 
                             'Select options',
                             theme=menu_theme,
                             mouse_motion_selection=True,
-                            onclose=outloop)
+                            onclose=d.set_menu.set_loop_false)
 
 
 def set_menu_loop():
-    global loop
-    loop = True
-    while loop:
+    d.set_menu.set_loop_true()
+    while d.set_menu.is_loop:
         screen.fill(d.WHITE)
 
 
@@ -384,9 +405,6 @@ def set_menu_loop():
         for event in events:
             if event.type == pygame.QUIT:
                 exit()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    loop = False
 
         if set_menu.is_enabled():  
             set_menu.update(events)
@@ -394,9 +412,9 @@ def set_menu_loop():
 
         pygame.display.update()
 
-# menu.add_text_input('Name :', default='John Doe')
 menu.add_button('Python test snake game', start_the_game)
 menu.add_button('Just a snake game', set_menu_loop)
+menu.add_selector('Sound:', [('On', True), ('Off', False)], onchange=d.sound.volume_control)
 menu.add_button('Quit', pygame_menu.events.EXIT)
 
 
@@ -410,7 +428,8 @@ set_menu.add_button('Play', snake)
 
 def pause():
     pause = True
-    d.pause_music.play(-1)
+    if d.sound.volume:
+        d.pause_music.play(-1)
     while pause:
         screen.fill(d.WHITE)
         for row in range(d.background_block_rows+2):
@@ -467,6 +486,3 @@ def pause():
 
 
 menu_loop()
-# while True:
-#     d.menu_music.play()
-

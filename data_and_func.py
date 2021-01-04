@@ -100,6 +100,32 @@ def set_speed(value, mode):
     speed = mode
 
 
+# def sound_control(value, mode):
+#     if mode == 1:
+#         pygame.mixer.unpause()
+#     elif mode == 0:
+#         pygame.mixer.pause()
+
+class Sound:
+
+    def __init__(self, volume = True):
+        self.volume = volume
+
+    def volume_control(self, a, b):
+        self.volume = b
+
+class LoopControl:
+
+    def __init__(self, is_loop = True):
+        self.is_loop = is_loop
+
+    def set_loop_true(self):
+        self.is_loop = True
+
+    def set_loop_false(self):
+        self.is_loop = False
+
+
 
 class Blocks:
 
@@ -180,7 +206,8 @@ class Questions:
         screen.blit(text,(20, 0 + interval1))
 
 
-
+set_menu = LoopControl()
+sound = Sound()
 snake = [Blocks(0, block_rows-1),
          Blocks(0, block_rows-1), 
          Blocks(0, block_rows-1), 
