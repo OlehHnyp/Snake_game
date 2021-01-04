@@ -13,6 +13,7 @@ screen = pygame.display.set_mode(d.screen_size)
 
 
 def snake():
+    d.menu.set_loop_false()
     d.set_menu.set_loop_false()
     d.menu_music.stop()    
     score = 0
@@ -154,11 +155,13 @@ def snake():
     time.sleep(3)
     if d.sound.volume:
         d.menu_music.play(-1)
+    menu_loop()
 
 
 
 
 def start_the_game():
+
     d.menu.set_loop_false()
     d.menu_music.stop()
     score = 0
