@@ -5,12 +5,14 @@ import time
 import pygame_menu
 
 import data_and_func as d
+import answers_and_questions as aq
 
 pygame.init()
 screen = pygame.display.set_mode(d.screen_size)
 
 
-def snake():    
+def snake():
+    d.menu_music.stop()    
     score = 0
     done = False
     pygame.display.set_caption(d.caption)
@@ -28,13 +30,17 @@ def snake():
     
 
     while not done:
+        snake_image = pygame.image.load(r"C:\Users\User\Downloads\—Pngtree—green snake clipart hand drawn_5534508 (converted).png")
         speed = len(d.snake)//4
         score_text = d.question_courier.render(f"Score: {score}", 0, d.WHITE)
+        speed_text = d.question_courier.render(f"Speed: {speed}", 0, d.WHITE)
         snake_head = d.snake[-1]
 
         screen.fill(d.WHITE)
         d.draw_margins(d.SUPER_BLUE)
         screen.blit(score_text, (d.screen_width-350, 5))
+        screen.blit(speed_text, (d.screen_width-350, 45))
+        screen.blit(snake_image, (-5, -50))
 
         for row in range(d.block_rows):
             for column in range(d.block_columns):
@@ -56,7 +62,9 @@ def snake():
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP and d.move_y != 1:
+                if event.key == pygame.K_SPACE:
+                    pause()
+                elif event.key == pygame.K_UP and d.move_y != 1:
                     d.reserve_move_x = 0
                     d.reserve_move_y = -1
                 elif event.key == pygame.K_DOWN and d.move_y != -1:
@@ -136,8 +144,9 @@ def snake():
 
 
 def start_the_game():
+    d.menu_music.stop()
     score = 0
-    life = 0
+    life = 0.666
     done = False
     d.snake = [d.Blocks(0, d.block_rows-1), 
                d.Blocks(0, d.block_rows-1),
@@ -147,7 +156,7 @@ def start_the_game():
 
     def test(question, answers):
         nonlocal life, score, done
-        life += 1
+        life += 0.334
         speed = len(d.snake)//5
         pygame.display.set_caption(d.caption)
         d.snake = d.set_default_snake(d.snake)
@@ -155,16 +164,17 @@ def start_the_game():
         d.reserve_move_y = 0
 
         while not done:
+            int_life = int(life)
             score_text = d.question_courier.render(f"Score: {score}", 0, d.WHITE)
-            life_text = d.question_courier.render(f"Life: {life}", 0, d.WHITE)
+            life_text = d.question_courier.render(f"Life: {int_life}", 0, d.WHITE)
             snake_head = d.snake[-1]
             check_answer = []
 
             screen.fill(d.WHITE)
             d.draw_margins(d.SUPER_BLUE)
             question.add_question()
-            screen.blit(score_text, (d.screen_width-350, 5))
-            screen.blit(life_text, (d.screen_width-350, 45))
+            screen.blit(score_text, (d.screen_width-270, 5))
+            screen.blit(life_text, (d.screen_width-270, 45))
             
             for row in range(d.block_rows):
                 for column in range(d.block_columns):
@@ -191,7 +201,9 @@ def start_the_game():
                     pygame.quit()
                     sys.exit()
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_UP and d.move_y != 1:
+                    if event.key == pygame.K_SPACE:
+                        pause()
+                    elif event.key == pygame.K_UP and d.move_y != 1:
                         d.reserve_move_x = 0
                         d.reserve_move_y = -1
                     elif event.key == pygame.K_DOWN and d.move_y != -1:
@@ -262,7 +274,7 @@ def start_the_game():
             d.clock.tick(2+speed)
         return score
         
-    for el in d.q_a_list_zip:
+    for el in aq.q_a_list_zip:
         test(el[0], el[1])
 
     d.game_over_sound.play()
@@ -297,6 +309,98 @@ def start_the_game():
 
 
 
+menu_theme = pygame_menu.themes.THEME_BLUE.copy()
+menu_theme.background_color = (178, 255, 103)
+menu_theme.title_font_color = (0, 0, 0)
+menu_theme.title_background_color = (0, 255, 0)
+menu = pygame_menu.Menu(300, 400, 'Welcome',theme=menu_theme)
 
+# menu.add_text_input('Name :', default='John Doe')
+menu.add_button('Python test snake game', start_the_game)
+menu.add_button('Just a snake game', snake)
+menu.add_button('Quit', pygame_menu.events.EXIT)
+
+def menu_loop():
+    while True:
+        screen.fill(d.WHITE)
+
+
+        for row in range(d.background_block_rows+2):
+                    for column in range(d.background_block_columns+2):
+                        color = d.BLUE
+                        if (row+column)%2 == 0:
+                            color = d.YELLOW
+                        d.draw_background(color, column, row)
+        
+
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                exit()
+
+        if menu.is_enabled():
+            d.menu_music.play(-1)  
+            menu.update(events)
+            menu.draw(screen)
+
+        pygame.display.update()
+
+def pause():
+    pause = True
+    d.pause_music.play(-1)
+    while pause:
+        screen.fill(d.WHITE)
+        for row in range(d.background_block_rows+2):
+                    for column in range(d.background_block_columns+2):
+                        color = d.BLUE
+                        if (row+column)%2 == 0:
+                            color = d.YELLOW
+                        d.draw_background(color, column, row)
+
+        pygame.draw.rect(screen, d.GREEN,
+                        ((d.screen_width-500)//2,
+                        (d.screen_height-230)//2,
+                        500,
+                        230)
+                        )
+        text1 = d.final_score_courier.render(f"Pause menu:", 0, d.WHITE)
+        text2 = d.final_score_courier.render(f"Space - continue", 0, d.WHITE)
+        text3 = d.final_score_courier.render(f"Esc - to menu", 0, d.WHITE)
+        screen.blit(text1,
+                    ((d.screen_width-300)//2,
+                    (d.screen_height-200)//2,)
+                    )
+        screen.blit(text2,
+                    ((d.screen_width-450)//2,
+                    (d.screen_height-100)//2,)
+                    )
+        screen.blit(text3,
+                    ((d.screen_width-450)//2,
+                    (d.screen_height)//2,)
+                    )
+
+        pygame.display.flip()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    d.pause_music.stop()
+                    pause = False
+                if event.key == pygame.K_ESCAPE:
+                    pause = False
+                    d.pause_music.stop()
+                    menu_loop()
+
+
+    
+
+
+                
+    d.clock.tick(10)
+
+
+menu_loop()
     
 

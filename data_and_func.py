@@ -1,14 +1,14 @@
 import pygame
 import random
-import pprint
 import copy
+import sys
 
 
 WHITE = (255, 255, 255)
 VIOLET = (204,0,204)
 YELLOW = (255, 255, 153)
 BLUE = (204, 255, 229)
-SUPER_BLUE = (0, 0, 255)
+SUPER_BLUE = (51, 153, 255)
 RED = (255, 0, 0)
 GREEN = (0, 200, 0)
 BLOCK_SIZE = 35
@@ -19,8 +19,8 @@ pygame.init()
 
 clock = pygame.time.Clock()
 caption = "The SNAKE game"
-screen_width = pygame.display.Info().current_w -100
-screen_height = pygame.display.Info().current_h -100
+screen_width = pygame.display.Info().current_w
+screen_height = pygame.display.Info().current_h
 screen_size = [screen_width, screen_height]
 screen = pygame.display.set_mode(screen_size)
 free_x = screen_width % (BLOCK_SIZE+INTERVAL)
@@ -34,19 +34,24 @@ background_block_rows = (screen_height) // (BLOCK_SIZE+INTERVAL)
 answer_courier =  pygame.font.SysFont('courier', 20)
 r_column = random.randint(0, block_columns-2)
 r_row = random.randint(0, block_rows-3)
-question_courier = pygame.font.SysFont('courier', 45, bold=True)
+question_courier = pygame.font.SysFont('palatinolinotype', 45, bold=True)
 final_score_courier = pygame.font.SysFont('courier', 45, bold=True)
-move_sound = pygame.mixer.Sound(r'C:\Users\User\Downloads\503340__tahutoa__clicky-accept-menu-sound.wav')
+move_sound = pygame.mixer.Sound(r'C:\Users\User\Downloads\377017__elmasmalo1__notification-pop.wav')
 right_sound = pygame.mixer.Sound(r'C:\Users\User\Downloads\right.wav')
 wrong_sound = pygame.mixer.Sound(r'C:\Users\User\Downloads\wrong.wav')
 next_level_sound = pygame.mixer.Sound(r'C:\Users\User\Downloads\next_level2.wav')
 crash_sound = pygame.mixer.Sound(r'C:\Users\User\Downloads\crash.wav')
 selfcrash_sound = pygame.mixer.Sound(r'C:\Users\User\Downloads\selfcrash.wav')
 game_over_sound = pygame.mixer.Sound(r'C:\Users\User\Downloads\game_over.wav')
+menu_music = pygame.mixer.Sound(r'C:\Users\User\Downloads\172707__axtoncrolley__nodens-field-song.mp3')
+pause_music = pygame.mixer.Sound(r'C:\Users\User\Downloads\265191__b-lamerichs__short-loops-26-02-2015-3.mp3')
 
 
-
-
+menu_music.set_volume(0.1)
+pause_music.set_volume(0.1)
+move_sound.set_volume(0.08)
+next_level_sound.set_volume(0.4)
+right_sound.set_volume(0.4)
 
                              
 
@@ -71,7 +76,7 @@ def draw_background(color, column, row):
 def draw_margins(color):
     pygame.draw.rect(screen, color, (0, 0, screen_width, question_margin))
     pygame.draw.rect(screen, color, (0, question_margin, free_x/2, screen_height-question_margin))
-    pygame.draw.rect(screen, color, (screen_width - free_x/2, question_margin, free_x/2, screen_height-question_margin))
+    pygame.draw.rect(screen, color, (screen_width - free_x/2+1, question_margin, free_x/2, screen_height-question_margin))
 
 def set_default_snake(x, n=0):
     snake = []
@@ -133,7 +138,6 @@ class AnswerBlocks:
             interval1 = 5
             text1 = answer_courier.render(self.answer[1], 0, WHITE)
             screen.blit(text1,(x, y + interval2))
-            print('1')
 
         text = answer_courier.render(self.answer[0], 0, WHITE)
         screen.blit(text,(x, y + interval1))
@@ -174,27 +178,5 @@ food = Blocks(r_column, r_row)
 
 
 
-answers1 = [AnswerBlocks(['True'], point=1, score=1,),
-            AnswerBlocks(['False'], point=1, score=1,),
-            AnswerBlocks(['Yes'], point=0, score=-1, life=-1),
-            AnswerBlocks(['Lie'], point=0, score=-1, life=-1)
-            ]
 
-question1 = Questions(2,["Eat all boolean values", "lkasjfklsjgl"])
-
-
-
-answers2 = [AnswerBlocks(['list'], point=1, score=1,),
-            AnswerBlocks(['float'], point=0, score=-1, life=-1),
-            AnswerBlocks(['int'], point=0, score=-1, life=-1),
-            AnswerBlocks(['str'], point=0, score=-1, life=-1),
-            AnswerBlocks(['set'], point=0, score=-1, life=-1),
-            ]
-
-question2 = Questions(1,["Eat all mutable types"])
-
-
-questions = [question1, question2]
-answers = [answers1, answers2]
-q_a_list_zip = list(zip(questions, answers))
 
