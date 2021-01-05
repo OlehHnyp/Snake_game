@@ -4,6 +4,7 @@ import sys
 import time
 import pygame_menu
 import copy
+import random
 from pygame_menu import sound
 
 import data_and_func as d
@@ -180,15 +181,17 @@ def start_the_game():
         speed = len(d.snake)//5
         pygame.display.set_caption(d.caption)
         d.snake = d.set_default_snake(d.snake)
-        d.reserve_move_x = 1
-        d.reserve_move_y = 0
+        d.move_x = d.reserve_move_x = 1
+        d.move_y = d.reserve_move_y = 0
+        check_answer = []
+
 
         while not done:
             int_life = int(life)
             score_text = d.question_courier.render(f"Score: {score}", 0, d.WHITE)
             life_text = d.question_courier.render(f"Life: {int_life}", 0, d.WHITE)
             snake_head = d.snake[-1]
-            check_answer = []
+            
 
             screen.fill(d.WHITE)
             d.draw_margins(d.SUPER_BLUE)
@@ -205,20 +208,25 @@ def start_the_game():
                         color = d.YELLOW
                     d.add_block(color, column, row)
 
-            for el in answers:
-
-                if el not in check_answer: # and not el.snake_in_answer(snake):
-                    el.add_answers()
-                else:
-                    while el in check_answer:# or el.snake_in_answer(snake):
+            if not check_answer:
+                print('Yes')
+                for el in answers:
+                    el.c = random.randint(0, d.block_columns-2)
+                    el.r = random.randint(0, d.block_rows-3)
+                    while el in check_answer:
                         el.c = random.randint(0, d.block_columns-2)
                         el.r = random.randint(0, d.block_rows-3)
-                    el.add_answers()
-                check_answer.append(el)
+                    check_answer.append(el)
+
+            answers = check_answer
+
+            for el in answers:
+                el.add_answers()
+
 
             for block in d.snake:
                 d.add_block(d.RED, block.c, block.r)
-            
+            # print(pygame.event.get())
             for event in pygame.event.get():
 
                 if event.type == pygame.QUIT:
@@ -245,6 +253,7 @@ def start_the_game():
             d.move_y = d.reserve_move_y
 
             pygame.display.flip()
+
             if d.sound.volume:
                 d.move_sound.play()
             
@@ -252,22 +261,24 @@ def start_the_game():
 
             if not new_head.isinside():
                 life -= 1
-                d.reserve_move_x = 1
-                d.reserve_move_y = 0
+                d.reserve_move_x = d.move_x = 1
+                d.reserve_move_y = d.move_y = 0
                 d.snake = d.set_default_snake(d.snake)
                 new_head = d.Blocks(1, d.block_rows-1)
 
-                if life < 0:
+                if life < 0:                    
                     done = True
                 
                 if d.sound.volume:
                     d.crash_sound.play()
+
                 time.sleep(1)
+                pygame.event.clear()
             
             if new_head in d.snake:
                 life -= 1
-                d.reserve_move_x = 1
-                d.reserve_move_y = 0
+                d.reserve_move_x = d.move_x = 1
+                d.reserve_move_y = d.move_y = 0
                 d.snake = d.set_default_snake(d.snake)
                 new_head = d.Blocks(1, d.block_rows-1)
 
@@ -276,7 +287,9 @@ def start_the_game():
                 
                 if d.sound.volume:
                     d.selfcrash_sound.play()
+
                 time.sleep(1)
+                pygame.event.clear()
 
             for i, el in enumerate(answers):
                 if el.snake_head_in_answer(new_head):                
@@ -295,6 +308,7 @@ def start_the_game():
                             d.next_level_sound.play()
 
                         time.sleep(1)
+                        pygame.event.clear()
                         return None
 
                     life += el.life
@@ -309,9 +323,13 @@ def start_the_game():
             d.snake.append(new_head)
             d.snake.pop(0)
             
+            
             d.clock.tick(2+speed)
+    
+    
     q_a_list_zip = copy.deepcopy(aq.q_a_list_zip)
-    for el in q_a_list_zip:
+    
+    for el in q_a_list_zip:        
         test(el[0], el[1])
 
     if d.sound.volume:
