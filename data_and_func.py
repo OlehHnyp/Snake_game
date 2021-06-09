@@ -116,7 +116,7 @@ class Sound:
 
 class LoopControl:
 
-    def __init__(self, is_loop = True):
+    def __init__(self, is_loop=True):
         self.is_loop = is_loop
 
     def set_loop_true(self):
@@ -125,6 +125,17 @@ class LoopControl:
     def set_loop_false(self):
         self.is_loop = False
 
+
+
+
+    def __init__(self, set_on=True):
+        self.set_on = set_on
+
+    def set_on_true(self):
+        self.set_on = True
+
+    def set_on_false(self):
+        self.set_on = False
 
 class Blocks:
 
@@ -213,7 +224,7 @@ snake = [Blocks(0, block_rows-1),
          Blocks(0, block_rows-1), 
          (0, block_rows-1), 
          Blocks(1, block_rows-1)]
-default_snake = copy.deepcopy(snake)
+# default_snake = copy.deepcopy(snake)
 move_x = reserve_move_x = 1
 move_y = reserve_move_y = 0
 food = Blocks(r_column, r_row)

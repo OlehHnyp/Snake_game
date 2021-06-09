@@ -53,7 +53,7 @@ answers5 = [d.AnswerBlocks(['a={1}', 'a[0]'], point=1, score=1,),
 
 question5 = d.Questions(2,["Eat all error cases",])
 
-answers6 = [d.AnswerBlocks(['[]'], point=1, score=1,),
+answers6 = [d.AnswerBlocks(['[ ]'], point=1, score=1,),
             d.AnswerBlocks(['a >', 'abs(a)'], point=1, score=1,),
             d.AnswerBlocks(['0 or 1'], point=0, score=-1, life=-1),
             d.AnswerBlocks(['"Fal', 'se"'], point=0, score=-1, life=-1),
@@ -90,12 +90,12 @@ question9 = d.Questions(2,["Basic principles of OOP in Python are:",
                            "encapsulation, ..."])
 
 answers10 = [d.AnswerBlocks(['True'], point=1, score=1,),
-            d.AnswerBlocks(['all([])'], point=0, score=-1, life=-1),
+            d.AnswerBlocks(['all', '([])'], point=0, score=-1, life=-1),
             d.AnswerBlocks(['False'], point=0, score=-1, life=-1),
             d.AnswerBlocks(['Error'], point=0, score=-1, life=-1)
             ]
 
-question10 = d.Questions(1,["print(all([]))",
+question10 = d.Questions(1,["print(all([ ]))",
                            "What does it print?"])
 
 

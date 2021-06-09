@@ -91,7 +91,6 @@ def snake():
         if d.sound.volume:
             d.move_sound.play()
     
-        
         new_head = d.Blocks(snake_head.c + d.move_x, snake_head.r + d.move_y)
 
         if not new_head.isinside():
@@ -103,10 +102,7 @@ def snake():
 
                 time.sleep(1)
             elif d.borders == 0:
-                new_head = d.set_no_borders(new_head)
-            
-
-            
+                new_head = d.set_no_borders(new_head)  
         
         if new_head in d.snake:
             done = True
@@ -209,7 +205,6 @@ def start_the_game():
                     d.add_block(color, column, row)
 
             if not check_answer:
-                print('Yes')
                 for el in answers:
                     el.c = random.randint(0, d.block_columns-2)
                     el.r = random.randint(0, d.block_rows-3)
@@ -427,14 +422,12 @@ def set_menu_loop():
     while d.set_menu.is_loop:
         screen.fill(d.WHITE)
 
-
         for row in range(d.background_block_rows+2):
                     for column in range(d.background_block_columns+2):
                         color = d.BLUE
                         if (row+column)%2 == 0:
                             color = d.YELLOW
                         d.draw_background(color, column, row)
-        
 
         events = pygame.event.get()
         for event in events:
@@ -449,14 +442,25 @@ def set_menu_loop():
 
 menu.add_button('Python test snake game', start_the_game)
 menu.add_button('Just a snake game', set_menu_loop)
-menu.add_selector('Sound:', [('On', True), ('Off', False)], onchange=d.sound.volume_control)
+menu.add_selector(
+    'Sound:', 
+    [('On', True), ('Off', False)], 
+    onchange=d.sound.volume_control
+    )
 menu.add_button('Quit', pygame_menu.events.EXIT)
 
 
 
-set_menu.add_selector('Borders:', [('Off', 0), ('On', 1)], onchange=d.set_borders)
-set_menu.add_selector('Speed:',
-                      [('Low', 3), ('Medium', 7), ('High', 10),('Extreme', 15), ('Increasing', None)], onchange=d.set_speed)
+set_menu.add_selector(
+    'Borders:', 
+    [('Off', 0), ('On', 1)], 
+    onchange=d.set_borders
+    )
+set_menu.add_selector(
+    'Speed:',
+    [('Low', 3), ('Medium', 7), ('High', 10),('Extreme', 15), ('Increasing', None)], 
+    onchange=d.set_speed
+    )
 set_menu.add_button('Play', snake)
 
 
@@ -497,6 +501,7 @@ def pause():
                     )
 
         pygame.display.flip()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
